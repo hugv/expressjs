@@ -7,12 +7,12 @@ const port = process.env.PORT || 8080;
 
 app.use(cors());
 
-// Ruta principal
+// Ruta raíz
 app.get("/", (req, res) => {
   res.send("Servidor ExpressJS funcionando correctamente");
 });
 
-// Nueva ruta: /price
+// Ruta para obtener el precio desde Binance
 app.get("/price", async (req, res) => {
   const symbol = req.query.symbol as string;
 
