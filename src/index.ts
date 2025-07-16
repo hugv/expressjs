@@ -33,5 +33,5 @@ app.get('/price', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Servidor escuchando en el puerto ${port}`);
+  console.log(`Servidor corriendo en puerto ${port}`);
 });
