@@ -1,27 +1,40 @@
-import express from 'express';
-import fetch from 'node-fetch';
+import express from "express";
+import fetch from "node-fetch";
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.get('/price', async (req, res) => {
+app.get("/price", async (req, res) => {
   const symbol = req.query.symbol as string;
-  if (!symbol) return res.status(400).json({ error: "Símbolo no especificado" });
+
+  if (!symbol) {
+    return res.status(400).json({ error: "Símbolo no especificado" });
+  }
 
   try {
     const response = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`);
-    const data = await response.json();
+    const text = await response.text();
 
-    if (!data || typeof data.price === "undefined") {
-      return res.status(404).json({ error: "No se encontró el precio", data });
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      return res.status(500).json({ error: "Respuesta no es JSON válido", raw: text });
     }
 
-    res.json({ symbol: data.symbol, price: data.price });
-  } catch (err: any) {
-    res.status(500).json({ error: "Error en el servidor", detail: err.message });
+    if (!data || typeof data.price === "undefined") {
+      return res.status(404).json({
+        error: "No se encontró el precio para el símbolo proporcionado",
+        data,
+      });
+    }
+
+    res.status(200).json({ symbol: data.symbol, price: data.price });
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener el precio de Binance", detail: error.message });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Server listening on http://localhost:${PORT}`);
 });
