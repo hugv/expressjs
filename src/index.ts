@@ -2,7 +2,7 @@ import express from 'express';
 import fetch from 'node-fetch';
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 app.get('/price', async (req, res) => {
   const symbol = req.query.symbol as string;
